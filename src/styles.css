@@ -1,6 +1,6 @@
 @import "tailwindcss" source(none);
-@source "../src";
 @import "tw-animate-css";
+@source "../src";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -59,10 +59,18 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-love-button: var(--love-button);
+  --color-love-button-hover: var(--love-button-hover);
+  --color-love-button-border: var(--love-button-border);
+  --color-love-button-foreground: var(--love-button-foreground);
+  --font-love-display: var(--love-display);
+  --font-love-body: var(--love-body);
 }
 
 :root {
   --radius: 0.625rem;
+  --love-display: "Trebuchet MS", "Segoe UI", sans-serif;
+  --love-body: "Georgia", "Times New Roman", serif;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -95,6 +103,26 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --love-night: oklch(0.13 0.08 342);
+  --love-night-deep: oklch(0.08 0.06 339);
+  --love-glow: oklch(0.65 0.27 350);
+  --love-hot: oklch(0.58 0.27 356);
+  --love-soft: oklch(0.94 0.04 68);
+  --love-paper: oklch(0.93 0.045 73);
+  --love-paper-ink: oklch(0.27 0.05 47);
+  --love-button: oklch(0.86 0.2 94);
+  --love-button-hover: oklch(0.91 0.19 97);
+  --love-button-border: oklch(0.98 0.08 101);
+  --love-button-foreground: oklch(0.18 0.055 55);
+  --flower-yellow: oklch(0.91 0.2 99);
+  --flower-gold: oklch(0.78 0.18 83);
+  --flower-light: oklch(0.97 0.13 106);
+  --leaf-green: oklch(0.43 0.14 142);
+  --leaf-deep: oklch(0.25 0.11 145);
+  --wood: oklch(0.39 0.11 54);
+  --wood-glow: oklch(0.54 0.13 61);
+  --spark: oklch(0.94 0.16 101);
+  --shadow-love-button: 0 0 0 0.35rem color-mix(in oklab, var(--love-button) 18%, transparent), 0 1.4rem 4rem color-mix(in oklab, var(--flower-yellow) 38%, transparent);
 }
 
 .dark {
@@ -130,6 +158,26 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --love-night: oklch(0.13 0.08 342);
+  --love-night-deep: oklch(0.08 0.06 339);
+  --love-glow: oklch(0.65 0.27 350);
+  --love-hot: oklch(0.58 0.27 356);
+  --love-soft: oklch(0.94 0.04 68);
+  --love-paper: oklch(0.93 0.045 73);
+  --love-paper-ink: oklch(0.27 0.05 47);
+  --love-button: oklch(0.86 0.2 94);
+  --love-button-hover: oklch(0.91 0.19 97);
+  --love-button-border: oklch(0.98 0.08 101);
+  --love-button-foreground: oklch(0.18 0.055 55);
+  --flower-yellow: oklch(0.91 0.2 99);
+  --flower-gold: oklch(0.78 0.18 83);
+  --flower-light: oklch(0.97 0.13 106);
+  --leaf-green: oklch(0.43 0.14 142);
+  --leaf-deep: oklch(0.25 0.11 145);
+  --wood: oklch(0.39 0.11 54);
+  --wood-glow: oklch(0.54 0.13 61);
+  --spark: oklch(0.94 0.16 101);
+  --shadow-love-button: 0 0 0 0.35rem color-mix(in oklab, var(--love-button) 18%, transparent), 0 1.4rem 4rem color-mix(in oklab, var(--flower-yellow) 38%, transparent);
 }
 
 @layer base {
@@ -140,5 +188,442 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--love-display);
+  }
+}
+
+.love-home,
+.love-story {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 18% 18%, color-mix(in oklab, var(--love-hot) 58%, transparent) 0 10%, transparent 22%),
+    radial-gradient(circle at 78% 24%, color-mix(in oklab, var(--love-glow) 52%, transparent) 0 8%, transparent 20%),
+    linear-gradient(180deg, var(--love-night) 0%, var(--love-night-deep) 62%, oklch(0.05 0.03 330) 100%);
+  color: var(--love-soft);
+  isolation: isolate;
+}
+
+.heart-sky,
+.story-sparks {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(45deg, transparent 47%, color-mix(in oklab, var(--love-soft) 28%, transparent) 48% 52%, transparent 53%),
+    linear-gradient(-45deg, transparent 47%, color-mix(in oklab, var(--love-soft) 20%, transparent) 48% 52%, transparent 53%),
+    radial-gradient(circle, color-mix(in oklab, var(--spark) 66%, transparent) 0 1px, transparent 2px);
+  background-position: 0 0, 0 0, 0 0;
+  background-size: 86px 86px, 86px 86px, 44px 44px;
+  opacity: 0.62;
+  animation: skyDrift 18s linear infinite;
+}
+
+.heart-sky::before,
+.story-sparks::before {
+  content: "♡  ♡     ♡        ♡    ♡       ♡";
+  position: absolute;
+  inset-inline: 0;
+  top: 8%;
+  font-size: clamp(2.6rem, 6vw, 5.6rem);
+  line-height: 1.8;
+  letter-spacing: 0.28em;
+  color: color-mix(in oklab, var(--love-soft) 42%, transparent);
+  filter: drop-shadow(0 0 1rem var(--love-glow));
+  transform: rotate(-6deg);
+  animation: heartsFloat 11s ease-in-out infinite alternate;
+}
+
+.love-home__center {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  padding: 3rem 1.25rem 13rem;
+}
+
+.fall-button-wrap {
+  animation: fallFromSky 1.45s cubic-bezier(0.18, 0.9, 0.24, 1.12) both;
+}
+
+.press-button {
+  position: relative;
+  min-width: min(82vw, 18rem);
+  font-family: var(--love-display);
+  font-size: clamp(1.1rem, 3.2vw, 1.55rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  animation: lovePulse 1.45s ease-in-out infinite;
+  transform: translateZ(0);
+}
+
+.press-button::after {
+  content: "";
+  position: absolute;
+  inset: -0.55rem;
+  border: 0.14rem dashed color-mix(in oklab, var(--flower-light) 70%, transparent);
+  border-radius: 999rem;
+  opacity: 0.78;
+  animation: haloSpin 8s linear infinite;
+}
+
+.pixel-garden {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 2;
+  height: min(28svh, 14rem);
+  background:
+    radial-gradient(ellipse at 50% 82%, color-mix(in oklab, var(--flower-yellow) 18%, transparent) 0 18%, transparent 38%),
+    linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--leaf-deep) 28%, transparent) 42%, var(--leaf-deep) 100%);
+}
+
+.pixel-garden--story {
+  height: min(26svh, 12rem);
+}
+
+.pixel-grass {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 7.5rem;
+  background:
+    repeating-linear-gradient(115deg, transparent 0 10px, color-mix(in oklab, var(--leaf-green) 92%, transparent) 10px 14px, transparent 14px 24px),
+    repeating-linear-gradient(65deg, transparent 0 12px, color-mix(in oklab, var(--leaf-deep) 85%, transparent) 12px 16px, transparent 16px 28px),
+    repeating-linear-gradient(90deg, transparent 0 13px, color-mix(in oklab, var(--leaf-green) 86%, transparent) 13px 17px, transparent 17px 24px),
+    repeating-linear-gradient(90deg, var(--leaf-deep) 0 18px, var(--leaf-green) 18px 24px, var(--leaf-deep) 24px 36px);
+  image-rendering: pixelated;
+  box-shadow: 0 -1.2rem 3rem color-mix(in oklab, var(--flower-yellow) 18%, transparent);
+}
+
+.pixel-flower {
+  --flower-left: 50%;
+  --flower-bottom: 38%;
+  --flower-scale: 1;
+  position: absolute;
+  left: var(--flower-left);
+  bottom: var(--flower-bottom);
+  width: calc(0.72rem * var(--flower-scale));
+  height: calc(0.72rem * var(--flower-scale));
+  background: var(--flower-yellow);
+  box-shadow:
+    calc(-0.72rem * var(--flower-scale)) 0 var(--flower-gold),
+    calc(0.72rem * var(--flower-scale)) 0 var(--flower-light),
+    0 calc(-0.72rem * var(--flower-scale)) var(--flower-light),
+    0 calc(0.72rem * var(--flower-scale)) var(--flower-gold),
+    0 calc(1.35rem * var(--flower-scale)) 0 calc(-0.18rem * var(--flower-scale)) var(--leaf-green),
+    0 calc(2.05rem * var(--flower-scale)) 0 calc(-0.22rem * var(--flower-scale)) var(--leaf-green);
+  image-rendering: pixelated;
+  animation: gardenSway 2.8s ease-in-out var(--flower-delay) infinite alternate;
+}
+
+.pixel-flower:nth-child(3n) {
+  animation-delay: -0.8s;
+}
+
+.pixel-flower:nth-child(4n) {
+  filter: drop-shadow(0 0 0.6rem color-mix(in oklab, var(--flower-yellow) 60%, transparent));
+}
+
+.story-stage {
+  position: relative;
+  z-index: 1;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 3rem) clamp(1rem, 5vw, 5rem) 10rem;
+}
+
+.tree-stage {
+  position: relative;
+  width: min(78vw, 34rem);
+  aspect-ratio: 1;
+  transform: translateX(0);
+  animation: treeStepsAside 1.15s cubic-bezier(0.18, 0.85, 0.23, 1) 7.1s forwards;
+}
+
+.heart-tree {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: visible;
+  filter: drop-shadow(0 1rem 1.4rem color-mix(in oklab, var(--wood) 36%, transparent));
+}
+
+.tree-path {
+  fill: none;
+  stroke: var(--wood);
+  stroke-width: 15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: drawTree 1.8s ease-out forwards;
+}
+
+.tree-root {
+  stroke-width: 12;
+  animation-duration: 1.6s;
+}
+
+.tree-trunk {
+  stroke: var(--wood-glow);
+  stroke-width: 26;
+  animation-delay: 0.9s;
+  animation-duration: 1.6s;
+}
+
+.branch {
+  stroke-width: 10;
+  animation-duration: 1.35s;
+}
+
+.branch-1 { animation-delay: 1.85s; }
+.branch-2 { animation-delay: 2.05s; }
+.branch-3 { animation-delay: 2.2s; }
+.branch-4 { animation-delay: 2.35s; }
+.branch-5 { animation-delay: 2.5s; }
+
+.heart-canopy,
+.wind-petals {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  z-index: 4;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.heart-petal,
+.wind-petal {
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 0.18rem;
+  background: var(--flower-yellow);
+  box-shadow: 0 0 0.9rem color-mix(in oklab, var(--flower-yellow) 42%, transparent);
+  transform: translate(var(--start-x), -118svh) rotate(0deg);
+  opacity: 0;
+}
+
+.heart-petal {
+  animation: flowerFall 2.3s cubic-bezier(0.2, 0.72, 0.1, 1) var(--delay) forwards, heartBreath 3.2s ease-in-out 6.9s infinite;
+}
+
+.wind-petal {
+  animation: windPetal 5.6s ease-in-out var(--delay) infinite;
+}
+
+.petal-tone-2 {
+  background: var(--flower-gold);
+}
+
+.petal-tone-3 {
+  background: var(--flower-light);
+}
+
+.petal-tone-4 {
+  background: color-mix(in oklab, var(--flower-yellow) 78%, var(--love-soft));
+}
+
+.poem-panel {
+  position: absolute;
+  left: clamp(1rem, 7vw, 8rem);
+  top: 50%;
+  z-index: 5;
+  width: min(38rem, 45vw);
+  padding: clamp(1.2rem, 3vw, 2rem);
+  border: 0.16rem solid color-mix(in oklab, var(--flower-yellow) 42%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--love-paper) 92%, transparent);
+  color: var(--love-paper-ink);
+  font-family: var(--love-body);
+  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
+  line-height: 1.55;
+  box-shadow: 0 2rem 5rem color-mix(in oklab, var(--love-night-deep) 55%, transparent);
+  opacity: 0;
+  transform: translate(-2.5rem, -45%) scale(0.96);
+  animation: poemReveal 1.2s cubic-bezier(0.18, 0.82, 0.22, 1) 8s forwards;
+}
+
+.poem-panel p {
+  margin-block: 0 1rem;
+}
+
+.poem-panel p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes fallFromSky {
+  0% {
+    transform: translateY(-120svh) rotate(-12deg) scale(0.82);
+    opacity: 0;
+  }
+  72% {
+    transform: translateY(1.1rem) rotate(2deg) scale(1.04);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes lovePulse {
+  0%, 100% {
+    box-shadow: var(--shadow-love-button);
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 0 0.7rem color-mix(in oklab, var(--love-button) 14%, transparent), 0 1.8rem 4.8rem color-mix(in oklab, var(--flower-yellow) 58%, transparent);
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes haloSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes skyDrift {
+  to {
+    background-position: 86px 86px, -86px 86px, 44px 44px;
+  }
+}
+
+@keyframes heartsFloat {
+  to {
+    transform: translateY(1.5rem) rotate(-2deg);
+  }
+}
+
+@keyframes gardenSway {
+  from {
+    transform: translateY(0) skewX(-3deg);
+  }
+  to {
+    transform: translateY(-0.45rem) skewX(4deg);
+  }
+}
+
+@keyframes drawTree {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flowerFall {
+  0% {
+    opacity: 0;
+    transform: translate(var(--start-x), -118svh) rotate(0deg) scale(0.72);
+  }
+  18% {
+    opacity: 1;
+  }
+  78% {
+    transform: translate(calc(var(--x) * 0.94), calc(var(--y) - 1rem)) rotate(280deg) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(var(--x), var(--y)) rotate(360deg) scale(1);
+  }
+}
+
+@keyframes heartBreath {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes treeStepsAside {
+  to {
+    transform: translateX(min(22vw, 15rem));
+  }
+}
+
+@keyframes poemReveal {
+  to {
+    opacity: 1;
+    transform: translate(0, -45%) scale(1);
+  }
+}
+
+@keyframes windPetal {
+  0% {
+    opacity: 0;
+    transform: translate(var(--x), var(--y)) rotate(0deg) scale(1);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  56% {
+    opacity: 0.86;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--x) + var(--start-x)), calc(var(--y) + 12rem)) rotate(420deg) scale(0.65);
+  }
+}
+
+@media (max-width: 820px) {
+  .story-stage {
+    align-items: start;
+    padding-top: 2.5rem;
+  }
+
+  .tree-stage {
+    width: min(92vw, 29rem);
+    margin-top: 7rem;
+    animation-name: treeStepsAsideMobile;
+  }
+
+  .poem-panel {
+    left: 50%;
+    top: 2.25rem;
+    width: min(91vw, 34rem);
+    max-height: 34svh;
+    overflow: auto;
+    font-size: clamp(0.98rem, 3.5vw, 1.18rem);
+    transform: translate(-50%, -1.25rem) scale(0.96);
+  }
+
+  @keyframes poemReveal {
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+  }
+}
+
+@keyframes treeStepsAsideMobile {
+  to {
+    transform: translateX(0) translateY(3.4rem) scale(0.82);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+
+  .tree-stage {
+    transform: translateX(min(22vw, 15rem));
+  }
+
+  .poem-panel,
+  .heart-petal {
+    opacity: 1;
   }
 }
