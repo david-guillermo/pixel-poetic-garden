@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import cloudLandscape from "@/assets/paisaje-nubes-pixel.png.asset.json";
+import landscapeUrl from "@/assets/paisaje-colinas-pixel.png";
 
 export const Route = createFileRoute("/amor")({
   head: () => ({
@@ -23,75 +23,114 @@ export const Route = createFileRoute("/amor")({
   component: LoveStory,
 });
 
-type AnimatedPetal = {
-  x: number;
-  y: number;
-  startX: number;
-  delay: number;
+/**
+ * Position and size are in "stage units": left/top are percentages of the tree stage
+ * and size/drift are cqw (1% of the stage width), so the canopy scales with the tree.
+ */
+type Heart = {
+  left: number;
+  top: number;
   size: number;
+  rotate: number;
+  delay: number;
+  startX: number;
   tone: number;
+  driftX: number;
+  driftY: number;
 };
 
 type CustomStyle = CSSProperties & Record<`--${string}`, string>;
 
-const HEART_PETALS: AnimatedPetal[] = Array.from({ length: 96 }, (_, index) => {
-  const t = (index / 96) * Math.PI * 2;
-  const heartX = 16 * Math.sin(t) ** 3;
-  const heartY = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-  const shimmer = Math.sin(index * 2.41);
-  const drift = Math.cos(index * 1.73);
-
-  return {
-    x: heartX * 10 + shimmer * 8,
-    y: -heartY * 9 + drift * 6 - 28,
-    startX: (index % 2 === 0 ? -1 : 1) * (180 + ((index * 37) % 260)),
-    delay: 2.9 + (index % 18) * 0.12,
-    size: 7 + (index % 5) * 2,
-    tone: (index % 4) + 1,
+function seededRandom(seed: number) {
+  let state = seed;
+  return () => {
+    state = (state + 0x6d2b79f5) | 0;
+    let t = Math.imul(state ^ (state >>> 15), 1 | state);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
-});
+}
 
-const WIND_PETALS: AnimatedPetal[] = Array.from({ length: 26 }, (_, index) => ({
-  x: 68 + Math.sin(index * 1.2) * 115,
-  y: -118 + Math.cos(index * 1.9) * 82,
-  startX: 95 + (index % 6) * 22,
-  delay: 7.4 + (index % 13) * 0.35,
-  size: 6 + (index % 4) * 2,
-  tone: (index % 4) + 1,
-}));
+// Mostly mid yellows; deep gold and pale yellow are the accents (tones 1-6, dark to light).
+const TONE_WEIGHTS = [0.12, 0.26, 0.28, 0.2, 0.1, 0.04];
 
-const HEART_LEAVES: AnimatedPetal[] = Array.from({ length: 68 }, (_, index) => {
-  const t = (index / 68) * Math.PI * 2;
-  const radius = 0.42 + ((index * 17) % 53) / 100;
-  const heartX = 16 * Math.sin(t) ** 3;
-  const heartY = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+function pickTone(roll: number) {
+  let total = 0;
+  for (const [index, weight] of TONE_WEIGHTS.entries()) {
+    total += weight;
+    if (roll < total) return index + 1;
+  }
+  return TONE_WEIGHTS.length;
+}
 
-  return {
-    x: heartX * 9.5 * radius + Math.sin(index * 3.1) * 10,
-    y: -heartY * 8.8 * radius - 28 + Math.cos(index * 2.2) * 8,
+// Implicit heart curve, y pointing up.
+function insideHeart(x: number, y: number) {
+  return (x * x + y * y - 1) ** 3 - x * x * y ** 3 <= 0;
+}
+
+const HEART_SCALE = 31;
+const HEART_CENTER_TOP = 40;
+
+const CANOPY_HEARTS: Heart[] = (() => {
+  const random = seededRandom(14);
+  const hearts: Heart[] = [];
+
+  while (hearts.length < 300) {
+    const x = random() * 2.5 - 1.25;
+    const y = random() * 2.4 - 1.1;
+    if (!insideHeart(x, y)) continue;
+
+    hearts.push({
+      left: 50 + x * HEART_SCALE,
+      top: HEART_CENTER_TOP - y * HEART_SCALE,
+      size: 4.4 + random() * 3.2,
+      rotate: (random() - 0.5) * 90,
+      delay: 2.5 + random() * 2.6,
+      startX: (random() - 0.5) * 520,
+      tone: pickTone(random()),
+      driftX: 0,
+      driftY: 0,
+    });
+  }
+
+  return hearts;
+})();
+
+const WIND_HEARTS: Heart[] = (() => {
+  const random = seededRandom(7);
+
+  return Array.from({ length: 22 }, (_, index) => ({
+    left: 25 + random() * 55,
+    top: 22 + random() * 40,
+    size: 3 + random() * 2.4,
+    rotate: 0,
+    delay: 7.4 + (index % 11) * 0.4,
     startX: 0,
-    delay: 2.45 + (index % 14) * 0.07,
-    size: 9 + (index % 4) * 2,
-    tone: (index % 3) + 1,
-  };
-});
+    tone: pickTone(random()),
+    driftX: 12 + random() * 22,
+    driftY: 30 + random() * 14,
+  }));
+})();
 
-function petalStyle(petal: AnimatedPetal): CustomStyle {
+function heartStyle(heart: Heart): CustomStyle {
   return {
-    "--x": `${petal.x}px`,
-    "--y": `${petal.y}px`,
-    "--start-x": `${petal.startX}px`,
-    "--delay": `${petal.delay}s`,
-    "--size": `${petal.size}px`,
+    "--left": `${heart.left.toFixed(2)}`,
+    "--top": `${heart.top.toFixed(2)}`,
+    "--size": `${heart.size.toFixed(2)}`,
+    "--rotate": `${heart.rotate.toFixed(0)}deg`,
+    "--start-x": `${heart.startX.toFixed(0)}px`,
+    "--delay": `${heart.delay.toFixed(2)}s`,
+    "--drift-x": `${heart.driftX.toFixed(1)}`,
+    "--drift-y": `${heart.driftY.toFixed(1)}`,
   };
 }
 
 function LoveStory() {
   return (
     <div className="love-story">
-      <img className="pixel-landscape" src={cloudLandscape.url} alt="" aria-hidden="true" />
+      <img className="pixel-landscape" src={landscapeUrl} alt="" aria-hidden="true" />
       <div className="story-sparks" aria-hidden="true" />
-      <main className="story-stage" aria-label="Árbol de amor con flores amarillas">
+      <main className="story-stage" aria-label="Árbol de amor con corazones">
         <section className="poem-panel" aria-label="Poema de amor">
           <p>Para el amor de mi vida:</p>
           <p>
@@ -111,43 +150,36 @@ function LoveStory() {
             <path
               className="tree-path tree-root"
               pathLength="1"
-              d="M258 500 C222 498 193 485 157 469 C120 452 85 468 52 481 M258 500 C296 498 328 480 363 464 C400 447 438 462 472 480 M258 500 C236 480 218 469 188 462 M258 500 C282 478 305 469 337 463"
+              d="M254 503 C238 501 222 495 204 500 M266 503 C282 501 298 495 316 500"
             />
-            <path className="tree-path tree-trunk" pathLength="1" d="M258 493 C249 430 261 360 258 282 C256 248 248 218 235 190" />
-            <path className="tree-path branch branch-1" pathLength="1" d="M256 370 C218 342 190 309 145 286 C119 273 98 247 78 219" />
-            <path className="tree-path branch branch-2" pathLength="1" d="M260 349 C301 320 329 294 374 276 C405 263 430 240 448 213" />
-            <path className="tree-path branch branch-3" pathLength="1" d="M249 299 C213 270 192 236 167 201 C150 177 126 158 105 143" />
-            <path className="tree-path branch branch-4" pathLength="1" d="M261 285 C294 254 321 220 351 183 C371 158 391 139 414 124" />
-            <path className="tree-path branch branch-5" pathLength="1" d="M244 237 C222 198 220 158 214 116 C210 87 199 65 187 44" />
-            <path className="tree-path branch branch-6" pathLength="1" d="M268 253 C284 210 286 169 301 124 C311 94 313 66 310 40" />
-            <path className="tree-path branch branch-7" pathLength="1" d="M185 225 C161 215 139 205 118 184" />
-            <path className="tree-path branch branch-8" pathLength="1" d="M340 196 C363 189 385 174 404 153" />
-            <path className="bark-detail" pathLength="1" d="M245 466 C266 432 244 407 264 372 M246 343 C263 326 248 305 261 287" />
+            <path className="tree-path tree-trunk" pathLength="1" d="M260 506 C258 460 262 410 260 340 C259 310 258 290 258 270" />
+            <path className="tree-path branch branch-1" pathLength="1" d="M259 330 C240 300 205 270 172 235 C150 212 130 190 112 158" />
+            <path className="tree-path branch branch-2" pathLength="1" d="M261 320 C282 292 318 262 350 232 C372 210 392 188 410 160" />
+            <path className="tree-path branch branch-3" pathLength="1" d="M259 285 C250 240 236 205 224 160 C216 132 206 108 196 84" />
+            <path className="tree-path branch branch-4" pathLength="1" d="M261 275 C270 232 286 198 298 156 C305 128 314 106 324 82" />
+            <path className="tree-path branch branch-5" pathLength="1" d="M172 235 C160 222 148 222 132 226" />
+            <path className="tree-path branch branch-6" pathLength="1" d="M350 232 C364 224 378 226 392 230" />
+            <path className="tree-path branch branch-7" pathLength="1" d="M259 290 C258 240 260 190 260 130" />
+            <path className="tree-path branch branch-8" pathLength="1" d="M224 160 C212 152 200 152 186 158" />
+            <path className="bark-detail" pathLength="1" d="M254 480 C262 450 253 425 259 395 M262 372 C257 355 263 338 259 318" />
           </svg>
 
           <div className="heart-canopy" aria-hidden="true">
-            {HEART_LEAVES.map((leaf, index) => (
-              <span
-                key={`leaf-${index}`}
-                className={`heart-leaf leaf-tone-${leaf.tone}`}
-                style={petalStyle(leaf)}
-              />
-            ))}
-            {HEART_PETALS.map((petal, index) => (
+            {CANOPY_HEARTS.map((heart, index) => (
               <span
                 key={index}
-                className={`heart-petal petal-tone-${petal.tone}`}
-                style={petalStyle(petal)}
+                className={`heart-piece canopy-heart heart-tone-${heart.tone}`}
+                style={heartStyle(heart)}
               />
             ))}
           </div>
 
-          <div className="wind-petals" aria-hidden="true">
-            {WIND_PETALS.map((petal, index) => (
+          <div className="wind-hearts" aria-hidden="true">
+            {WIND_HEARTS.map((heart, index) => (
               <span
                 key={index}
-                className={`wind-petal petal-tone-${petal.tone}`}
-                style={petalStyle(petal)}
+                className={`heart-piece wind-heart heart-tone-${heart.tone}`}
+                style={heartStyle(heart)}
               />
             ))}
           </div>

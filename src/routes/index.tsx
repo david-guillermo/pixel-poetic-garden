@@ -2,7 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import type { CSSProperties } from "react";
 
 import { Button } from "@/components/ui/button";
-import cloudLandscape from "@/assets/paisaje-nubes-pixel.png.asset.json";
+import landscapeUrl from "@/assets/paisaje-colinas-pixel.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="love-home">
-      <img className="pixel-landscape" src={cloudLandscape.url} alt="" aria-hidden="true" />
+      <img className="pixel-landscape" src={landscapeUrl} alt="" aria-hidden="true" />
       <div className="heart-sky" aria-hidden="true" />
       <main className="love-home__center" aria-label="Entrada al jardín de amor">
         <div className="fall-button-wrap">

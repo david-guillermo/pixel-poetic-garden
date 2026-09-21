@@ -122,6 +122,13 @@
   --wood: oklch(0.39 0.11 54);
   --wood-glow: oklch(0.54 0.13 61);
   --spark: oklch(0.94 0.16 101);
+  --heart-1: oklch(0.66 0.15 78);
+  --heart-2: oklch(0.78 0.17 85);
+  --heart-3: oklch(0.86 0.19 92);
+  --heart-4: oklch(0.91 0.2 99);
+  --heart-5: oklch(0.95 0.15 103);
+  --heart-6: oklch(0.97 0.1 108);
+  --heart-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
   --shadow-love-button: 0 0 0 0.35rem color-mix(in oklab, var(--love-button) 18%, transparent), 0 1.4rem 4rem color-mix(in oklab, var(--flower-yellow) 38%, transparent);
 }
 
@@ -212,10 +219,6 @@
   object-position: center bottom;
   image-rendering: pixelated;
   filter: saturate(1.08) brightness(1.04);
-}
-
-.love-story .pixel-landscape {
-  filter: saturate(0.9) brightness(0.82);
 }
 
 .heart-sky,
@@ -346,16 +349,42 @@
   z-index: 1;
   min-height: 100svh;
   display: grid;
-  place-items: center;
-  padding: clamp(1rem, 4vw, 3rem) clamp(1rem, 5vw, 5rem) 6.5rem;
+  place-items: end center;
+  padding: clamp(1rem, 4vw, 3rem) clamp(1rem, 5vw, 5rem) 2rem;
 }
 
+/* The trunk base sits ~97% down the stage, so the stage rests on the grass strip. */
 .tree-stage {
   position: relative;
-  width: min(80vw, 36rem);
+  width: min(80vw, 36rem, calc(100svh - 3rem));
   aspect-ratio: 1;
+  z-index: 3;
+  container-type: size;
   transform: translateX(0);
+  transform-origin: 50% 100%;
   animation: treeStepsAside 1.15s cubic-bezier(0.18, 0.85, 0.23, 1) 7.1s forwards;
+}
+
+/* Little mound of earth hiding the foot of the trunk so it reads as planted. */
+.tree-stage::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 96.4%;
+  z-index: 3;
+  width: 30%;
+  height: 4.4%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, var(--leaf-green), var(--leaf-deep));
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: groundIn 0.8s ease-out 0.9s forwards;
+}
+
+@keyframes groundIn {
+  to {
+    opacity: 1;
+  }
 }
 
 .heart-tree {
@@ -378,19 +407,19 @@
 }
 
 .tree-root {
-  stroke-width: 20;
+  stroke-width: 14;
   animation-duration: 1.6s;
 }
 
 .tree-trunk {
   stroke: var(--wood);
-  stroke-width: 47;
+  stroke-width: 30;
   animation-delay: 0.9s;
   animation-duration: 1.6s;
 }
 
 .branch {
-  stroke-width: 18;
+  stroke-width: 13;
   animation-duration: 1.35s;
 }
 
@@ -398,10 +427,10 @@
 .branch-2 { animation-delay: 2.05s; }
 .branch-3 { animation-delay: 2.2s; }
 .branch-4 { animation-delay: 2.35s; }
-.branch-5 { animation-delay: 2.5s; }
-.branch-6 { animation-delay: 2.6s; }
-.branch-7 { animation-delay: 2.7s; stroke-width: 12; }
-.branch-8 { animation-delay: 2.8s; stroke-width: 12; }
+.branch-5 { animation-delay: 2.5s; stroke-width: 9; }
+.branch-6 { animation-delay: 2.6s; stroke-width: 9; }
+.branch-7 { animation-delay: 2.7s; stroke-width: 9; }
+.branch-8 { animation-delay: 2.8s; stroke-width: 8; }
 
 .bark-detail {
   fill: none;
@@ -414,63 +443,48 @@
 }
 
 .heart-canopy,
-.wind-petals {
+.wind-hearts {
   position: absolute;
-  left: 50%;
-  top: 42%;
+  inset: 0;
   z-index: 4;
-  width: 1px;
-  height: 1px;
   pointer-events: none;
 }
 
-.heart-petal,
-.wind-petal,
-.heart-leaf {
+.heart-canopy {
+  transform-origin: 50% 70%;
+  filter: drop-shadow(0 0 0.06rem color-mix(in oklab, var(--wood) 70%, transparent));
+  animation: canopyBeat 3.2s ease-in-out 7.4s infinite;
+}
+
+/* Sizes are cqw (1% of the tree stage width) so the canopy scales with the tree. */
+.heart-piece {
   position: absolute;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 0.18rem;
-  background: var(--flower-yellow);
-  box-shadow: 0 0 0.9rem color-mix(in oklab, var(--flower-yellow) 42%, transparent);
-  transform: translate(var(--start-x), -118svh) rotate(0deg);
+  left: calc(var(--left) * 1%);
+  top: calc(var(--top) * 1%);
+  width: calc(var(--size) * 1cqw);
+  height: calc(var(--size) * 1cqw);
+  margin: calc(var(--size) * -0.5cqw) 0 0 calc(var(--size) * -0.5cqw);
+  background: var(--heart-2);
+  -webkit-mask: var(--heart-mask) center / contain no-repeat;
+  mask: var(--heart-mask) center / contain no-repeat;
   opacity: 0;
 }
 
-.heart-leaf {
-  z-index: -1;
-  width: calc(var(--size) * 1.35);
-  height: var(--size);
-  border-radius: 80% 18% 80% 18%;
-  background: var(--leaf-green);
-  box-shadow: 0 0 0.55rem color-mix(in oklab, var(--leaf-deep) 34%, transparent);
-  opacity: 0;
-  transform: translate(var(--x), var(--y)) rotate(45deg) scale(0);
-  animation: leafBloom 0.7s cubic-bezier(0.18, 0.86, 0.25, 1.25) var(--delay) forwards, leafRustle 3.4s ease-in-out 7s infinite;
+.canopy-heart {
+  transform: translate(var(--start-x), -110svh) rotate(0deg) scale(0.7);
+  animation: heartFall 2.1s cubic-bezier(0.2, 0.72, 0.1, 1) var(--delay) forwards;
 }
 
-.leaf-tone-2 { background: color-mix(in oklab, var(--leaf-green) 72%, var(--flower-yellow)); }
-.leaf-tone-3 { background: var(--leaf-deep); }
-
-.heart-petal {
-  animation: flowerFall 2.3s cubic-bezier(0.2, 0.72, 0.1, 1) var(--delay) forwards, heartBreath 3.2s ease-in-out 6.9s infinite;
+.wind-heart {
+  animation: windHeart 5.6s ease-in-out var(--delay) infinite;
 }
 
-.wind-petal {
-  animation: windPetal 5.6s ease-in-out var(--delay) infinite;
-}
-
-.petal-tone-2 {
-  background: var(--flower-gold);
-}
-
-.petal-tone-3 {
-  background: var(--flower-light);
-}
-
-.petal-tone-4 {
-  background: color-mix(in oklab, var(--flower-yellow) 78%, var(--love-soft));
-}
+.heart-tone-1 { background: var(--heart-1); }
+.heart-tone-2 { background: var(--heart-2); }
+.heart-tone-3 { background: var(--heart-3); }
+.heart-tone-4 { background: var(--heart-4); }
+.heart-tone-5 { background: var(--heart-5); }
+.heart-tone-6 { background: var(--heart-6); }
 
 .poem-panel {
   position: absolute;
@@ -559,42 +573,27 @@
   }
 }
 
-@keyframes flowerFall {
+@keyframes heartFall {
   0% {
     opacity: 0;
-    transform: translate(var(--start-x), -118svh) rotate(0deg) scale(0.72);
+    transform: translate(var(--start-x), -110svh) rotate(0deg) scale(0.7);
   }
   18% {
     opacity: 1;
   }
-  78% {
-    transform: translate(calc(var(--x) * 0.94), calc(var(--y) - 1rem)) rotate(280deg) scale(1.08);
-  }
   100% {
     opacity: 1;
-    transform: translate(var(--x), var(--y)) rotate(360deg) scale(1);
+    transform: translate(0, 0) rotate(var(--rotate)) scale(1);
   }
 }
 
-@keyframes heartBreath {
+@keyframes canopyBeat {
   0%, 100% {
-    filter: brightness(1);
+    transform: scale(1);
   }
   50% {
-    filter: brightness(1.2);
+    transform: scale(1.014);
   }
-}
-
-@keyframes leafBloom {
-  to {
-    opacity: 1;
-    transform: translate(var(--x), var(--y)) rotate(45deg) scale(1);
-  }
-}
-
-@keyframes leafRustle {
-  0%, 100% { margin-left: 0; rotate: 0deg; }
-  50% { margin-left: 3px; rotate: 7deg; }
 }
 
 @keyframes treeStepsAside {
@@ -610,10 +609,10 @@
   }
 }
 
-@keyframes windPetal {
+@keyframes windHeart {
   0% {
     opacity: 0;
-    transform: translate(var(--x), var(--y)) rotate(0deg) scale(1);
+    transform: translate(0, 0) rotate(0deg) scale(1);
   }
   12% {
     opacity: 0.9;
@@ -623,19 +622,18 @@
   }
   100% {
     opacity: 0;
-    transform: translate(calc(var(--x) + var(--start-x)), calc(var(--y) + 12rem)) rotate(420deg) scale(0.65);
+    transform: translate(calc(var(--drift-x) * 1cqw), calc(var(--drift-y) * 1cqw)) rotate(420deg) scale(0.65);
   }
 }
 
 @media (max-width: 820px) {
   .story-stage {
-    align-items: start;
+    align-items: end;
     padding-top: 2.5rem;
   }
 
   .tree-stage {
-    width: min(92vw, 29rem);
-    margin-top: 5rem;
+    width: min(92vw, 29rem, calc(100svh - 3rem));
     animation-name: treeStepsAsideMobile;
   }
 
@@ -659,7 +657,7 @@
 
 @keyframes treeStepsAsideMobile {
   to {
-    transform: translateX(0) translateY(3.4rem) scale(0.82);
+    transform: translateX(0) scale(0.92);
   }
 }
 
@@ -677,7 +675,7 @@
   }
 
   .poem-panel,
-  .heart-petal {
+  .canopy-heart {
     opacity: 1;
   }
 }
