@@ -125,25 +125,78 @@ function heartStyle(heart: Heart): CustomStyle {
   };
 }
 
+const POEM = [
+  "Para el amor de mi vida:",
+  "Si pudiera guardar un lugar seguro en el mundo, lo haría justo a tu lado.",
+  "Donde caen flores amarillas, mi corazón aprende a quedarse.",
+  "Y si el viento mueve las ramas, que también lleve mi promesa: amarte bonito, todos los días.",
+];
+
+// The scroll unrolls at 8s (see .poem-panel); the pen starts writing once it has settled.
+// Writing is pure CSS (one delayed fade per letter) so it doesn't depend on hydration.
+const POEM_TYPING_START_S = 9;
+const POEM_CHAR_S = 0.042;
+const POEM_PAUSE_S = 0.15;
+const POEM_LINE_PAUSE_S = 0.25;
+
+type PoemChar = { char: string; delay: number; hold: number };
+
+const POEM_LINES: PoemChar[][] = (() => {
+  let time = POEM_TYPING_START_S;
+
+  return POEM.map((line, lineIndex) => {
+    if (lineIndex > 0) time += POEM_LINE_PAUSE_S;
+
+    return [...line].map((char) => {
+      const delay = time;
+      const hold = POEM_CHAR_S + (",.:".includes(char) ? POEM_PAUSE_S : 0);
+      time += hold;
+      return { char, delay, hold };
+    });
+  });
+})();
+
+function PoemScroll() {
+  return (
+    <section className="poem-panel" aria-label="Poema de amor">
+      <div className="poem-text">
+        {POEM.map((line, lineIndex) => (
+          <p key={lineIndex}>
+            <span className="sr-only">{line}</span>
+            <span aria-hidden="true">
+              {POEM_LINES[lineIndex]?.map(({ char, delay, hold }, charIndex) =>
+                char === " " ? (
+                  " "
+                ) : (
+                  <span
+                    key={charIndex}
+                    className="poem-char"
+                    style={
+                      {
+                        "--d": `${delay.toFixed(3)}s`,
+                        "--hold": `${hold.toFixed(3)}s`,
+                      } as CustomStyle
+                    }
+                  >
+                    {char}
+                  </span>
+                ),
+              )}
+            </span>
+          </p>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function LoveStory() {
   return (
     <div className="love-story">
       <img className="pixel-landscape" src={landscapeUrl} alt="" aria-hidden="true" />
       <div className="story-sparks" aria-hidden="true" />
       <main className="story-stage" aria-label="Árbol de amor con corazones">
-        <section className="poem-panel" aria-label="Poema de amor">
-          <p>Para el amor de mi vida:</p>
-          <p>
-            Si pudiera guardar un lugar seguro en el mundo, lo haría justo a tu lado.
-          </p>
-          <p>
-            Donde caen flores amarillas, mi corazón aprende a quedarse.
-          </p>
-          <p>
-            Y si el viento mueve las ramas, que también lleve mi promesa: amarte bonito,
-            todos los días.
-          </p>
-        </section>
+        <PoemScroll />
 
         <section className="tree-stage" aria-label="Árbol formando un corazón">
           <svg className="heart-tree" viewBox="0 0 520 520" aria-hidden="true">

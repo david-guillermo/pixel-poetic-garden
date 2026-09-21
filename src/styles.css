@@ -486,32 +486,75 @@
 .heart-tone-5 { background: var(--heart-5); }
 .heart-tone-6 { background: var(--heart-6); }
 
+/*
+ * The poem is written on a pixel-art scroll (363x537). Text is placed inside the paper
+ * area of the image and sized in cqw so it scales with the scroll.
+ */
 .poem-panel {
+  --poem-x: 0px;
+  --poem-y: -50%;
   position: absolute;
   left: clamp(1rem, 7vw, 8rem);
-  top: 50%;
+  top: 46%;
   z-index: 5;
-  width: min(38rem, 45vw);
-  padding: clamp(1.2rem, 3vw, 2rem);
-  border: 0.16rem solid color-mix(in oklab, var(--flower-yellow) 42%, transparent);
-  border-radius: 0.75rem;
-  background: color-mix(in oklab, var(--love-paper) 92%, transparent);
+  width: min(23rem, 40vw, calc((100svh - 4rem) * 0.676));
+  aspect-ratio: 363 / 537;
+  container-type: inline-size;
+  background: url("./assets/carta-pergamino-pixel.png") center / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 1.5rem 1.5rem color-mix(in oklab, var(--love-night-deep) 45%, transparent));
   color: var(--love-paper-ink);
-  font-family: var(--love-body);
-  font-size: clamp(1.05rem, 1.7vw, 1.45rem);
-  line-height: 1.55;
-  box-shadow: 0 2rem 5rem color-mix(in oklab, var(--love-night-deep) 55%, transparent);
   opacity: 0;
-  transform: translate(-2.5rem, -45%) scale(0.96);
+  clip-path: inset(-20% -20% 100% -20%);
+  translate: calc(var(--poem-x) - 1.5rem) var(--poem-y);
   animation: poemReveal 1.2s cubic-bezier(0.18, 0.82, 0.22, 1) 8s forwards;
 }
 
-.poem-panel p {
-  margin-block: 0 1rem;
+/* Paper area of the scroll image: x 11%-96%, y 8%-92%; the text is centered inside it. */
+.poem-text {
+  position: absolute;
+  top: 10%;
+  right: 8%;
+  bottom: 10%;
+  left: 13%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: var(--love-body);
+  font-style: italic;
+  font-size: 1.15rem;
+  font-size: 5.8cqw;
+  line-height: 1.45;
 }
 
-.poem-panel p:last-child {
+.poem-text p {
+  margin-block: 0 0.85em;
+}
+
+.poem-text p:last-child {
   margin-bottom: 0;
+}
+
+/*
+ * Each letter is invisible (but keeps its space, so lines never reflow) until its own
+ * delay, then appears; a pen mark rides on the letter being written.
+ */
+.poem-char {
+  position: relative;
+  opacity: 0;
+  animation: poemInk 0.01s linear var(--d) forwards;
+}
+
+.poem-char::after {
+  content: "";
+  position: absolute;
+  top: 0.12em;
+  right: -0.07em;
+  bottom: -0.06em;
+  width: 0.09em;
+  background: var(--love-paper-ink);
+  opacity: 0;
+  animation: penMark var(--hold) linear var(--d);
 }
 
 @keyframes fallFromSky {
@@ -605,7 +648,21 @@
 @keyframes poemReveal {
   to {
     opacity: 1;
-    transform: translate(0, -45%) scale(1);
+    clip-path: inset(-20% -20% -20% -20%);
+    translate: var(--poem-x) var(--poem-y);
+  }
+}
+
+@keyframes poemInk {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes penMark {
+  from,
+  to {
+    opacity: 1;
   }
 }
 
@@ -638,20 +695,11 @@
   }
 
   .poem-panel {
+    --poem-x: -50%;
+    --poem-y: 0px;
     left: 50%;
-    top: 2.25rem;
-    width: min(91vw, 34rem);
-    max-height: 34svh;
-    overflow: auto;
-    font-size: clamp(0.98rem, 3.5vw, 1.18rem);
-    transform: translate(-50%, -1.25rem) scale(0.96);
-  }
-
-  @keyframes poemReveal {
-    to {
-      opacity: 1;
-      transform: translate(-50%, 0) scale(1);
-    }
+    top: 1.5rem;
+    width: clamp(14rem, calc((100svh - 25rem) * 0.676), min(88vw, 20rem));
   }
 }
 
@@ -677,5 +725,18 @@
   .poem-panel,
   .canopy-heart {
     opacity: 1;
+  }
+
+  .poem-panel {
+    clip-path: none;
+    translate: var(--poem-x) var(--poem-y);
+  }
+
+  .poem-char {
+    animation-delay: 0s;
+  }
+
+  .poem-char::after {
+    display: none;
   }
 }
