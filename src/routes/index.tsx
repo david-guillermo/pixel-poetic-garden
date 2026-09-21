@@ -1,4 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
+import type { CSSProperties } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -41,10 +42,19 @@ function Index() {
 function PixelGarden() {
   return (
     <div className="pixel-garden" aria-hidden="true">
-      {Array.from({ length: 48 }, (_, index) => (
-        <span key={index} className={`pixel-flower pixel-flower-${(index % 12) + 1}`} />
+      {Array.from({ length: 72 }, (_, index) => (
+        <span key={index} className="pixel-flower" style={flowerStyle(index)} />
       ))}
       <div className="pixel-grass" />
     </div>
   );
+}
+
+function flowerStyle(index: number): CSSProperties & Record<`--${string}`, string> {
+  return {
+    "--flower-left": `${1.5 + ((index * 7.9) % 97)}%`,
+    "--flower-bottom": `${20 + ((index * 13) % 45)}%`,
+    "--flower-scale": `${0.66 + ((index * 5) % 9) / 12}`,
+    "--flower-delay": `${-((index * 0.17) % 2.8)}s`,
+  };
 }

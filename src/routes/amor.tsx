@@ -133,10 +133,19 @@ function LoveStory() {
 function PixelGarden() {
   return (
     <div className="pixel-garden pixel-garden--story" aria-hidden="true">
-      {Array.from({ length: 58 }, (_, index) => (
-        <span key={index} className={`pixel-flower pixel-flower-${(index % 12) + 1}`} />
+      {Array.from({ length: 86 }, (_, index) => (
+        <span key={index} className="pixel-flower" style={flowerStyle(index)} />
       ))}
       <div className="pixel-grass" />
     </div>
   );
+}
+
+function flowerStyle(index: number): CustomStyle {
+  return {
+    "--flower-left": `${1 + ((index * 6.7) % 98)}%`,
+    "--flower-bottom": `${18 + ((index * 11) % 47)}%`,
+    "--flower-scale": `${0.62 + ((index * 7) % 10) / 12}`,
+    "--flower-delay": `${-((index * 0.14) % 2.8)}s`,
+  };
 }

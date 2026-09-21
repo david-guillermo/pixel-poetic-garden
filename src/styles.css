@@ -257,6 +257,7 @@
   letter-spacing: 0.02em;
   text-transform: uppercase;
   animation: lovePulse 1.45s ease-in-out infinite;
+  transform: translateZ(0);
 }
 
 .press-button::after {
@@ -276,6 +277,7 @@
   z-index: 2;
   height: min(28svh, 14rem);
   background:
+    radial-gradient(ellipse at 50% 82%, color-mix(in oklab, var(--flower-yellow) 18%, transparent) 0 18%, transparent 38%),
     linear-gradient(180deg, transparent 0%, color-mix(in oklab, var(--leaf-deep) 28%, transparent) 42%, var(--leaf-deep) 100%);
 }
 
@@ -289,6 +291,8 @@
   bottom: 0;
   height: 7.5rem;
   background:
+    repeating-linear-gradient(115deg, transparent 0 10px, color-mix(in oklab, var(--leaf-green) 92%, transparent) 10px 14px, transparent 14px 24px),
+    repeating-linear-gradient(65deg, transparent 0 12px, color-mix(in oklab, var(--leaf-deep) 85%, transparent) 12px 16px, transparent 16px 28px),
     repeating-linear-gradient(90deg, transparent 0 13px, color-mix(in oklab, var(--leaf-green) 86%, transparent) 13px 17px, transparent 17px 24px),
     repeating-linear-gradient(90deg, var(--leaf-deep) 0 18px, var(--leaf-green) 18px 24px, var(--leaf-deep) 24px 36px);
   image-rendering: pixelated;
@@ -313,21 +317,8 @@
     0 calc(1.35rem * var(--flower-scale)) 0 calc(-0.18rem * var(--flower-scale)) var(--leaf-green),
     0 calc(2.05rem * var(--flower-scale)) 0 calc(-0.22rem * var(--flower-scale)) var(--leaf-green);
   image-rendering: pixelated;
-  animation: gardenSway 2.8s ease-in-out infinite alternate;
+  animation: gardenSway 2.8s ease-in-out var(--flower-delay) infinite alternate;
 }
-
-.pixel-flower-1 { --flower-left: 2%; --flower-bottom: 28%; --flower-scale: 0.82; }
-.pixel-flower-2 { --flower-left: 7%; --flower-bottom: 44%; --flower-scale: 1.08; }
-.pixel-flower-3 { --flower-left: 13%; --flower-bottom: 32%; --flower-scale: 0.96; }
-.pixel-flower-4 { --flower-left: 19%; --flower-bottom: 53%; --flower-scale: 1.12; }
-.pixel-flower-5 { --flower-left: 25%; --flower-bottom: 36%; --flower-scale: 0.88; }
-.pixel-flower-6 { --flower-left: 34%; --flower-bottom: 49%; --flower-scale: 1.05; }
-.pixel-flower-7 { --flower-left: 43%; --flower-bottom: 31%; --flower-scale: 0.92; }
-.pixel-flower-8 { --flower-left: 53%; --flower-bottom: 51%; --flower-scale: 1.15; }
-.pixel-flower-9 { --flower-left: 62%; --flower-bottom: 34%; --flower-scale: 0.82; }
-.pixel-flower-10 { --flower-left: 72%; --flower-bottom: 47%; --flower-scale: 1.02; }
-.pixel-flower-11 { --flower-left: 84%; --flower-bottom: 30%; --flower-scale: 0.9; }
-.pixel-flower-12 { --flower-left: 94%; --flower-bottom: 54%; --flower-scale: 1.12; }
 
 .pixel-flower:nth-child(3n) {
   animation-delay: -0.8s;
@@ -484,10 +475,12 @@
 
 @keyframes lovePulse {
   0%, 100% {
-    transform: scale(1);
+    box-shadow: var(--shadow-love-button);
+    filter: brightness(1);
   }
   50% {
-    transform: scale(1.08);
+    box-shadow: 0 0 0 0.7rem color-mix(in oklab, var(--love-button) 14%, transparent), 0 1.8rem 4.8rem color-mix(in oklab, var(--flower-yellow) 58%, transparent);
+    filter: brightness(1.12);
   }
 }
 
